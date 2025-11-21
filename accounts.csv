@@ -1,0 +1,12 @@
+Processing transaction: CsvTransaction { tx_type: Deposit, client_id: 1, tx: 1001, amount: Some("100.21466") }
+Processing transaction: CsvTransaction { tx_type: Deposit, client_id: 2, tx: 1000, amount: Some("234.03465456") }
+Processing transaction: CsvTransaction { tx_type: Withdrawal, client_id: 1, tx: 1000, amount: Some("50.0232") }
+Processing transaction: CsvTransaction { tx_type: Dispute, client_id: 2, tx: 1002, amount: None }
+Processing transaction: CsvTransaction { tx_type: Resolve, client_id: 2, tx: 1002, amount: None }
+Processing transaction: CsvTransaction { tx_type: Chargeback, client_id: 1, tx: 1003, amount: None }
+Processing transaction: CsvTransaction { tx_type: Deposit, client_id: 3, tx: 1004, amount: Some("300.5") }
+Processing transaction: CsvTransaction { tx_type: Withdrawal, client_id: 3, tx: 1005, amount: Some("32.25") }
+Processing transaction: CsvTransaction { tx_type: Dispute, client_id: 3, tx: 1005, amount: None }
+Processing transaction: CsvTransaction { tx_type: Chargeback, client_id: 3, tx: 1005, amount: None }
+Processing transaction: CsvTransaction { tx_type: Resolve, client_id: 1, tx: 1003, amount: None }
+Deserialized 11 transactions
