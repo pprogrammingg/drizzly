@@ -31,6 +31,8 @@ it is going to process (20-50 min )
 simply append error to a file (20min)
 
 4. When CSV thread finishes, go through hashmap of clients and print all their balances to output (make sure amounts are 4
-decimal) (20 min)
+decimal) (5 min)
 
 5. Additional test coverage and manual testing (30 min)
+
+5. Consideration was given to chunk based reading in CSV ingestion- but for now left it out

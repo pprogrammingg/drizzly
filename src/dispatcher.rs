@@ -1,7 +1,9 @@
 
 use std::sync::mpsc::{Receiver, Sender};
 use std::thread;
+use std::thread::JoinHandle;
 use crate::csv_ingestor::CsvTransaction;
+use crate::error::ApplicationError;
 
 /// Dispatcher forwards transactions to a worker assigned specifically to a client id
 pub struct Dispatcher {
@@ -23,7 +25,7 @@ impl Dispatcher {
 
     /// Start dispatcher loop in its own thread, select the right worker based on client_id
     /// and send transactions to it
-    pub fn start(self, ingestion_receiver: Receiver<CsvTransaction>) {
+    pub fn start(self, ingestion_receiver: Receiver<CsvTransaction>) ->  JoinHandle<Result<(), ApplicationError>> {
         thread::spawn(move || {
             for csv_transaction in ingestion_receiver {
                 let worker_index = self.assign_worker(csv_transaction.client_id);
@@ -32,6 +34,8 @@ impl Dispatcher {
                     eprintln!("Dispatcher failed to send to worker {}: {}", worker_index, e);
                 }
             }
-        });
+
+            Ok(())
+        })
     }
 }

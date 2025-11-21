@@ -28,7 +28,7 @@ fn main() -> Result<(), ApplicationError>{
     // and sending the csv transaction that worker
     let (dispatcher_sender, ingestion_receiver) = channel();
     let dispatcher = Dispatcher::new(worker_senders);
-    dispatcher.start(ingestion_receiver);
+    let dispatcher_handle = dispatcher.start(ingestion_receiver);
 
     // Spawn CSV ingestion thread
     let csv_path_clone = csv_path.to_string();
@@ -36,17 +36,24 @@ fn main() -> Result<(), ApplicationError>{
         read_csv(&csv_path_clone, dispatcher_sender)
     });
 
-    // wait till data ingestion is done
+    // wait till csv ingestion to terminate or propagate errors
     match ingestion_handle.join() {
         Ok(Ok(_)) => { println!("CSV ingestion thread finished!");}
-        Ok(Err(e)) => return Err(e), // propagate ApplicationError
+        Ok(Err(e)) => return Err(e),
         Err(panic) => panic!("CSV ingestion thread panicked: {:?}", panic),
     }
 
-    // wait till workers are done after
+    // wait for dispatcher to terminate or propagate errors
+    match dispatcher_handle.join() {
+        Ok(Ok(())) => { println!("Dispatcher successfully terminated!")} ,
+        Ok(Err(e)) => return Err(e),
+        Err(panic) => return Err(ApplicationError::Other(format!("Dispatcher panicked: {:?}", panic))),
+    }
+
+    // wait till workers are terminated and errors are propagated
     for handle in worker_handles {
         match handle.join() {
-            Ok(Ok(())) => { println!("worker successfully finished and shutdown!"); },
+            Ok(Ok(())) => { println!("worker successfully terminated!"); },
             Ok(Err(e)) => return Err(e),
             Err(panic) => {
                 return Err(ApplicationError::Other(format!("Worker thread panicked: {:?}", panic)));
