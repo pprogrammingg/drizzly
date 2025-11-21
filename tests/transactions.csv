@@ -1,12 +1,18 @@
 type,client,tx,amount
 deposit,1,1001,100.21466
-deposit,2,1000,234.03465456
-withdrawal,1,1000,50.023233
+deposit,2,1002,234.03465456
+withdrawal,1,2001,30.023233
+withdrawal,1,3001,523.323
+deposit,2,2002,10.22
 dispute,2,1002,
-resolve,2,1002,
-chargeback,1,1003,
-deposit,3,1004,300.5
-withdrawal,3,1005,32.25
-dispute,3,1005,
-chargeback,3, 1005,
-resolve,1,1003,
+chargeback,2,1002,
+deposit,2,3002,51.23
+deposit,3,1003,100
+deposit,3,2003,1000.2323
+dispute,3,1003,
+resolve,3,1003,
+dispute,1,1001,
+deposit,2,4002,.5
+
+
+

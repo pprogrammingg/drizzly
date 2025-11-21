@@ -8,11 +8,11 @@ pub enum ApplicationError {
     #[error("CSV deserialization error: {0}")]
     FailedDeserializedCsvTransaction(String),
 
-    #[error("Client has insufficient balance for withdrawal: {0}")]
-    InsufficientAvailableBalanceForWithdrawal(String),
+    #[error("Client has insufficient balance for withdrawal. More info: client-id {0}, tx-id {1}")]
+    InsufficientAvailableBalanceForWithdrawal(u16, u32),
 
-    #[error("Client account is frozen, cannot perform transaction. More info: {0}")]
-    ClientAccountFrozen(String),
+    #[error("Client account is frozen, cannot perform transaction. More info: client-id {0}, tx-id {1}")]
+    ClientAccountFrozen(u16, u32),
 
 
     #[error("Other error: {0}")]

@@ -114,7 +114,7 @@ mod tests {
 
 
                     let amount_rounded = amount.round_dp(4);
-                    println!("amount {} and amount_rounded {} are:",tx.amount.unwrap(), amount_rounded);
+                    //println!("amount {} and amount_rounded {} are:",tx.amount.unwrap(), amount_rounded);
                     assert_eq!(amount, amount_rounded, "Withdraw or Deposit type at Row {} amount not rounded to 4 decimals", row_number);
                 }
                 TransactionType::Dispute |

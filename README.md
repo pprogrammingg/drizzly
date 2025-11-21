@@ -27,12 +27,41 @@ it is going to process (20-50 min )
      print success message and write it to Client tx history
      - if process tx failed,  print error and submit it to the channel
 
-3. Place the error reporting channel receive end in CSV reader as it is top-level, 
-simply append error to a file (20min)
+3. Collect and print all errors to STD Err 
 
 4. When CSV thread finishes, go through hashmap of clients and print all their balances to output (make sure amounts are 4
-decimal) (5 min)
+decimal) 
 
 5. Additional test coverage and manual testing (30 min)
 
-5. Consideration was given to chunk based reading in CSV ingestion- but for now left it out
+
+# Improvements
+CSV read can also take chunks instead of reading 1 by 1 to further enhance speed.
+
+# Testing Examples
+Input
+
+type,client,tx,amount
+deposit,1,1001,100.21466
+deposit,2,1002,234.03465456
+withdrawal,1,999,50.023233
+withdrawal,1,9999,523.323
+deposit,2,2002,10.22
+dispute,2,1002,
+chargeback,2,1002,
+deposit,2,3002,51.23
+deposit,3,1003,100
+depost,3,2003,1000
+
+
+Output
+client,available,held,total,locked
+3,100.0000,0.0000,100.0000,false
+2,10.2200,0.0000,10.2200,true
+1,50.1915,0.0000,50.1915,false
+
+STD Err
+- CSV deserialization error: tests/transactions.csv: CSV deserialize error: record 10 (line: 11, byte: 224): unknown variant `depost`, expected one of `deposit`, `withdrawal`, `dispute`, `resolve`, `chargeback`
+- Client has insufficient balance for withdrawal: 1:9999
+- Client account is frozen, cannot perform transaction. More info: client-id 2, tx-id 3002
+

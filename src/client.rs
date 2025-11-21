@@ -50,8 +50,8 @@ impl Client {
             Ok(())
         } else {
             Err(InsufficientAvailableBalanceForWithdrawal(
-                format!("{}:{}", tx.client_id, tx.tx_id),
-            ))
+                tx.client_id, tx.tx_id),
+            )
         }
     }
 
@@ -60,17 +60,18 @@ impl Client {
     /// Ignore non-existing transactions.
     pub fn dispute(&mut self, tx_id: u32) {
         if let Some(tx) = self.tx_history.get(&tx_id) {
+            //eprintln!("tx is {:#?}", tx);
             match tx.amount {
                 Some(amount) => {
                     self.available -= amount;
                     self.held += amount;
                 }
                 None => {
-                    println!("WARNING: referenced tx for dispute had no amount!!!, {}:{}", tx.client_id, tx.tx_id );
+                    eprintln!("WARNING: referenced tx for dispute had no amount!!!, {}:{}", tx.client_id, tx.tx_id );
                 }
             }
         }else {
-            println!("WARNING: referenced tx for dispute does not exist in history!!!, {tx_id}" );
+            eprintln!("WARNING: referenced tx for dispute does not exist in history!!!, {tx_id}" );
         }
     }
 
@@ -79,17 +80,19 @@ impl Client {
     /// Ignore non-existing transactions or transactions not under dispute.
     pub fn resolve(&mut self, tx_id: u32) {
         if let Some(tx) = self.tx_history.get(&tx_id) {
+
+            // assuming when a transaction is found it is under dispute
             match tx.amount {
                 Some(amount) => {
                     self.held -= amount;
                     self.available += amount;
                 }
                 None => {
-                    println!("WARNING: referenced tx for resolve had no amount!!!, {}:{}", tx.client_id, tx.tx_id  );
+                    eprintln!("WARNING: referenced tx for resolve had no amount!!!, {}:{}", tx.client_id, tx.tx_id  );
                 }
             }
         }else {
-            println!("WARNING: referenced tx for resolve does not exist in history!!!, {tx_id}" );
+            eprintln!("WARNING: referenced tx for resolve does not exist in history!!!, {tx_id}" );
         }
     }
 
@@ -105,11 +108,11 @@ impl Client {
                     self.locked = true;
                 }
                 None => {
-                    println!("WARNING: referenced tx for chargeback had no amount!!!, {}:{}", tx.client_id, tx.tx_id ) ;
+                    eprintln!("WARNING: referenced tx for chargeback had no amount!!!, {}:{}", tx.client_id, tx.tx_id ) ;
                 }
             }
         } else {
-            println!("WARNING: referenced tx for chargeback does not exist in history!!!, {tx_id}" );
+           eprintln!("WARNING: referenced tx for chargeback does not exist in history!!!, {tx_id}" );
         }
     }
 }
@@ -155,8 +158,9 @@ mod tests {
         let bad_withdrawal = make_tx(1, 3, Some(100.0), TransactionType::Withdrawal);
         let err = client.withdraw(&bad_withdrawal).unwrap_err();
         match err {
-            ApplicationError::InsufficientAvailableBalanceForWithdrawal(msg) => {
-                assert_eq!(msg, "1:3");
+            InsufficientAvailableBalanceForWithdrawal(client_id, tx_id) => {
+                assert_eq!(client_id, 1);
+                assert_eq!(tx_id, 3);
             }
             _ => panic!("Expected InsufficientAvailableBalanceForWithdrawal error"),
         }
